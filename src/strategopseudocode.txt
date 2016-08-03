@@ -1,0 +1,64 @@
+//Initialization or Driver Class - pseudocode or "NEW GAME"
+
+Board board = New Board;
+board.Flip(); //displays the board
+board.SetupMatch(); //setsup the pieces ***Elaboration below
+board.CheckGameover()
+while(1){
+	board.GetMove(); //***Elaboration below
+	board.Muster();
+	board.CheckGameover();
+	if(board.winner != "")
+		break
+	if(board.turn == "Red")
+		board.turn = "Blue"
+	if(board.turn == "Blue")
+		board.turn = "Red"
+	display blank screen with turn and hold for spacebar
+}
+//display the winner with a congratulation message/etc.
+
+//SetupMatch basics:
+Basically what you did in yours.
+string StartingPieces = Arrayofpieces
+Flip()
+turn = "Red"
+for(every piece in starting pieces)
+	New piece on mouse/displayed somewhere/box put around it in the combatants box
+	Get a location from mouse click
+	Check Location, if valid continue, else loop
+	Squares[mouse][location] = new Piece(turn,piece)
+	Flip()
+wait for spacebar with a covered display.
+turn = "Blue"
+for(every piece in starting pieces)
+	New piece on mouse/displayed somewhere/box put around it in the combatants box
+	Get a location from mouse click
+	Check Location, if valid continue, else loop
+	Squares[mouse][location] = new Piece(turn,piece)
+	Flip()
+turn = "Red"
+^^^NOTE THIS IS A COPY PASE WHICH WE SHOULD REMOVE BY A DIFFERENT IMPLEMENTATION/FUNCTION CALL
+
+//GetMove basics:
+Get a position from mouse click
+If this position contains a moveable piece select it
+Player should be able to cancel a selection with a right click
+If next click is a left click (not right) get the position
+Check if the position is a valid move for the piece, if it is not loop back around
+If so move the piece, if it is an enemy call SelectedPiece.Attack(Piece at target location)
+If an attack occured display a panel or animation saying the rank of the two peices and the result.
+***We need a way to inform the player who was attacked of the piece rank, perhaps put the last move somewhere in the UI
+
+//Piece.Attack basics:
+If target.rank == flag call FlagCapture(attackers color)
+If target.rank == Bomb && rank != 8
+	return -1
+else If target == Bomb
+	return 1
+else If target.rank < rank
+	return 1
+else If target.rank > rank
+	return -1
+else
+	return 0
