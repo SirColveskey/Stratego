@@ -9,8 +9,8 @@ public class Piece implements Cloneable, Serializable{
 	public String Color;
 	public int Rank;
 	public int Range;
-	BufferedImage piece;
-	BufferedImage insignia;
+	transient public BufferedImage piece;
+	transient public BufferedImage insignia;
 	public Piece(String ID)
 	{
 		if(ID == "blank")
@@ -80,6 +80,49 @@ public class Piece implements Cloneable, Serializable{
 		else
 			Range = 1;
 	}
+	
+	public void Reimage()
+	{
+		String lastChar;
+		if(Color.equals("Red")){
+			try {
+				piece = ImageIO.read(new File("src/imgs/RED.png"));
+			} catch (IOException ex) {
+				System.out.println("Error with file loading.");
+				System.out.println("src/imgs/RED.png");}
+		}
+		if(Color.equals("Blue")){
+			try {
+				piece = ImageIO.read(new File("src/imgs/BLUE.png"));
+			} catch (IOException ex) {
+				System.out.println("Error with file loading.");}}
+		if(Rank == -1)
+		{
+			lastChar = "F";
+		}
+		else if(Rank == 0)
+		{
+			lastChar = "B";
+		}
+		else if(Rank == 10)
+		{
+			lastChar = "S";
+		}
+		else if(Rank == -3)
+		{
+			return;
+		}
+		else
+		{
+			lastChar = Rank+"";
+		}
+		try {
+			insignia = ImageIO.read(new File("src/imgs/"+Color+lastChar+".png"));
+		} catch (IOException ex) {
+			System.out.println("Error with file loading.");
+			System.out.println("src/imgs/"+Color+lastChar+".png");}
+		
+		}
 	
 	public int Attack(Piece other)
 	{
