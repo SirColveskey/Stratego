@@ -19,6 +19,7 @@ import javax.swing.JButton;
 import javax.swing.Box.Filler;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.awt.Color;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
@@ -28,23 +29,21 @@ import java.awt.image.BufferedImage;
 
 import java.lang.Math;
 
-public class Board implements MouseListener, MouseMotionListener{
-	public String Winner = "";
+public class Board implements MouseListener, MouseMotionListener, Serializable{
 	public Piece[][] Squares = new Piece[10][10];
 	public String Turn;
 	public String Dialogue = "";
 	public int[] RedPieces;
 	public int[] BluePieces;
 	public int[] Pools = new int[22];
-	public JFrame Window;
-	public GamePanel Canvas;
-	public boolean MouseClicked = false;
-	public int X1 = -1;
-	public int Y1 = -1;
-	public int X2 = -1;
-	public int Y2 = -1;
-	public int posx;
-	public int posy;
+	transient public JFrame Window;
+	transient public GamePanel Canvas;
+	transient public int X1 = -1;
+	transient public int Y1 = -1;
+	transient public int X2 = -1;
+	transient public int Y2 = -1;
+	transient public int posx;
+	transient public int posy;
 	public String State;
 	public ArrayList<Piece> activePieces;
 	public int index = 0;
@@ -114,6 +113,8 @@ public class Board implements MouseListener, MouseMotionListener{
 			for(int j=0; j<10; j++)
 			{
 				result = (Squares[i][j].Color == Turn);
+				if(Turn == "reveal")
+					result = true;
 				Canvas.grid[i][j].NewPiece(Squares[i][j],result);
 			}
 		}
@@ -138,28 +139,123 @@ public class Board implements MouseListener, MouseMotionListener{
 	}
 	
 	public void CheckGameover()
-	{
+	{	
+		System.out.print("Check Gameover!");
+		//check if movable pieces
+		int totalRange = 0;
+		for(int i=0; i<10; ++i)
+		{
+			for(int j=0; j<10; ++j)
+			{
+				if(Squares[i][j].Color == Turn)
+				{
+					totalRange += Squares[i][j].Range;
+				}
+			}
+		}
+		System.out.print("Total Range: " + totalRange);
+		if (totalRange == 0)
+		{
+			Dialogue = Turn + "player has no moveable pieces! Opponent is victorious!";
+			State = "Endgame";
+			Canvas.CursorPiece = new Piece("blank");
+			Turn = "reveal";
+			ChangeTurns();
+		}
 		
+		
+		//check if pieces are stuck
+		int saveX1 = X1;
+		int saveX2 = X2;
+		int saveY1 = Y1;
+		int saveY2 = Y2;
+		for(int i=0; i<10; ++i)
+		{
+			for(int j=0; j<10; ++j)
+			{
+				if(Squares[i][j].Color == Turn)
+				{
+					X1 = j;
+					Y1 = i;
+					
+					X2 = j+1;
+					Y2 = i;
+					if (X2 >= 0 && X2 <= 9) 
+						if (GetMove(true))
+						{
+							System.out.print("break: " + X1 + " " + Y1 + " " + X2 + " " + Y2);
+							X1 = saveX1;
+							X2 = saveX2;
+							Y1 = saveY1;
+							Y2 = saveY2;
+							return;
+						}
+					
+					X2 = j-1;
+					Y2 = i;
+					if (X2 >= 0 && X2 <= 9) 
+						if (GetMove(true))
+						{
+							System.out.print("break: " + X1 + " " + Y1 + " " + X2 + " " + Y2);
+							X1 = saveX1;
+							X2 = saveX2;
+							Y1 = saveY1;
+							Y2 = saveY2;
+							
+							return;
+						}
+					
+					X2 = j;
+					Y2 = i+1;
+					if (Y2 >= 0 && Y2 <= 9)
+						if (GetMove(true)) 
+						{
+							System.out.print("break: " + X1 + " " + Y1 + " " + X2 + " " + Y2);
+							X1 = saveX1;
+							X2 = saveX2;
+							Y1 = saveY1;
+							Y2 = saveY2;
+							return;
+						}
+					
+					X2 = j;
+					Y2 = i-1;
+					if (Y2 >= 0 && Y2 <= 9)
+						if (GetMove(true)) 
+						{
+							System.out.print("break: " + X1 + " " + Y1 + " " + X2 + " " + Y2);
+							X1 = saveX1;
+							X2 = saveX2;
+							Y1 = saveY1;
+							Y2 = saveY2;
+							return;
+						}
+				}
+			}
+		}
+		if(State != "Endgame")
+		{
+			Dialogue = Turn + " player has trapped all of their pieces! Opponent is victorious!";
+			State = "Endgame";
+			Canvas.CursorPiece = new Piece("blank");
+			Turn = "reveal";
+			ChangeTurns();
+		}
 	}
 	
-	public void GetMove()
+	public boolean GetMove(boolean testRun)
 	{
 		if(Squares[Y1][X1].Color != Turn) //Only move own color
-			return;
-		System.out.println("Passed Stage 1");
+			return false;
 		if(Squares[Y2][X2].Color == Turn) //Don't move on own color
-			return;
-		System.out.println("Passed Stage 2");
+			return false;
 		if(Squares[Y2][X2].Color == "lake") //Lakes!
-			return;
-		System.out.println("Passed Stage 3");
+			return false;
 		if((X1 != X2 && Y1 != Y2) || (X1 == X2 && Y1 == Y2)) //Move in a straight line
-			return;
-		System.out.println("Passed Stage 4");
+			return false;
 		System.out.println(X1 + " " + X2 + " " + Y1 + " " + Y2);
 		if(Squares[Y1][X1].Range < Math.abs((X1 - X2) + (Y1 - Y2))) //Move in piece range
-			return;
-		System.out.println("Passed Stage 5");
+			return false;
 		if (Math.abs((X1 - X2) + (Y1 - Y2)) > 1) //if movement > 1
 		{
 			
@@ -174,7 +270,7 @@ public class Board implements MouseListener, MouseMotionListener{
 				for (int i=start+1; i<stop-1; i++) //Check intermediate spaces for obstacles 
 				{
 					if(Squares[Y1][i].Color != "")
-						return;
+						return false;
 				}
 			}
 			else //If the movement is on Y
@@ -188,11 +284,12 @@ public class Board implements MouseListener, MouseMotionListener{
 				for (int i=start+1; i<stop-1; i++)
 				{
 					if(Squares[i][X1].Color != "")
-						return;
+						return false;
 				}		
 			}
 		}
-		System.out.println("Passed Stage 6 -- Successful Move");
+		if (testRun == true)
+			return true;
 		//move processing:
 		int result = -2;
 		if(Squares[Y2][X2].Color == "")
@@ -268,7 +365,7 @@ public class Board implements MouseListener, MouseMotionListener{
 			FlagCapture(Turn);
 			Muster();
 			Flip();
-			return;
+			return true;
 		}
 		Turn = "";
 		Canvas.CursorPiece = new Piece("blank");
@@ -291,6 +388,7 @@ public class Board implements MouseListener, MouseMotionListener{
 		{
 			State = "Red Turn";
 		}
+		return true;
 	}
 	
 	public void Muster()
@@ -324,7 +422,14 @@ public class Board implements MouseListener, MouseMotionListener{
 	
 	public void FlagCapture(String Color)
 	{
-		
+		Dialogue = Color + " has captured their opponent's flag and is victorious! Contratulations!";
+		Turn = "reveal";
+		State = "Endgame";
+		Canvas.CursorPiece = new Piece("blank");
+		Squares[Y2][X2] = Squares[Y1][X1];
+		Squares[Y1][X1] = new Piece("blank");
+		Flip();
+		ChangeTurns();
 	}
 	
 	public void LoadMatch(String name)
@@ -390,6 +495,7 @@ public class Board implements MouseListener, MouseMotionListener{
 				ChangeTurns();
 				Turn = "Red";
 				State = "Red Turn";
+				CheckGameover();
 			}
 		}
 		Muster();
@@ -433,12 +539,16 @@ public class Board implements MouseListener, MouseMotionListener{
 		
 		if(State == "Red Turn")
 		{
-			GetMove();
+			CheckGameover();
+			GetMove(false);
+			CheckGameover();
 			Canvas.CursorPiece = new Piece("blank");
 		}
 		if(State == "Blue Turn")
 		{
-			GetMove();
+			CheckGameover();
+			GetMove(false);
+			CheckGameover();
 			Canvas.CursorPiece = new Piece("blank");
 		}
 		
