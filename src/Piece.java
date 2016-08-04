@@ -39,16 +39,16 @@ public class Piece implements Cloneable, Serializable{
 		{
 			Color = "Red";
 			try {
-				piece = ImageIO.read(new File("src/imgs/RED.png"));
+				piece = ImageIO.read(Piece.class.getResourceAsStream("/resources/RED.png"));
 			} catch (IOException ex) {
 				System.out.println("Error with file loading.");
-				System.out.println("src/imgs/RED.png");}
+				System.out.println("src/resources/RED.png");}
 		}
 		else if(firstChar.equals("B"))
 		{
 			Color = "Blue";
 			try {
-				piece = ImageIO.read(new File("src/imgs/BLUE.png"));
+				piece = ImageIO.read(Piece.class.getResourceAsStream("/resources/BLUE.png"));
 			} catch (IOException ex) {
 				System.out.println("Error with file loading.");}
 		}
@@ -69,10 +69,10 @@ public class Piece implements Cloneable, Serializable{
 			Rank = Integer.parseInt(lastChar);
 		}
 		try {
-			insignia = ImageIO.read(new File("src/imgs/"+Color+lastChar+".png"));
+			insignia = ImageIO.read(Piece.class.getResourceAsStream("/resources/"+Color+lastChar+".png"));
 		} catch (IOException ex) {
 			System.out.println("Error with file loading.");
-			System.out.println("src/imgs/"+Color+lastChar+".png");}
+			System.out.println("/resources/"+Color+lastChar+".png");}
 		if(Rank == 9)
 			Range = 10;
 		else if(Rank == 0 || Rank == -1)
@@ -86,14 +86,14 @@ public class Piece implements Cloneable, Serializable{
 		String lastChar;
 		if(Color.equals("Red")){
 			try {
-				piece = ImageIO.read(new File("src/imgs/RED.png"));
+				piece = ImageIO.read(Piece.class.getResourceAsStream("/resources/RED.png"));
 			} catch (IOException ex) {
 				System.out.println("Error with file loading.");
-				System.out.println("src/imgs/RED.png");}
+				System.out.println("/resources/RED.png");}
 		}
 		if(Color.equals("Blue")){
 			try {
-				piece = ImageIO.read(new File("src/imgs/BLUE.png"));
+				piece = ImageIO.read(Piece.class.getResourceAsStream("/resources/BLUE.png"));
 			} catch (IOException ex) {
 				System.out.println("Error with file loading.");}}
 		if(Rank == -1)
@@ -117,10 +117,10 @@ public class Piece implements Cloneable, Serializable{
 			lastChar = Rank+"";
 		}
 		try {
-			insignia = ImageIO.read(new File("src/imgs/"+Color+lastChar+".png"));
+			insignia = ImageIO.read(Piece.class.getResourceAsStream("/resources/"+Color+lastChar+".png"));
 		} catch (IOException ex) {
 			System.out.println("Error with file loading.");
-			System.out.println("src/imgs/"+Color+lastChar+".png");}
+			System.out.println("/resources/"+Color+lastChar+".png");}
 		
 		}
 	
