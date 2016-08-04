@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-public class Piece {
+public class Piece implements Cloneable{
 	public String Color;
 	public int Rank;
 	public int Range;
@@ -21,10 +21,19 @@ public class Piece {
 			Color = "";
 			return;
 		}
+		if(ID == "lake")
+		{
+			piece = null;
+			insignia = null;
+			Range = 0;
+			Rank = -3;
+			Color = "lake";
+			return;
+		}
 		String firstChar = ID.substring(0,1);
-		System.out.println(firstChar);
+		//System.out.println(firstChar);
 		String lastChar = ID.substring(1,2);
-		System.out.println(lastChar);
+		//System.out.println(lastChar);
 		if(firstChar.equals("R"))
 		{
 			Color = "Red";
@@ -63,6 +72,12 @@ public class Piece {
 		} catch (IOException ex) {
 			System.out.println("Error with file loading.");
 			System.out.println("src/imgs/"+Color+lastChar+".png");}
+		if(Rank == 9)
+			Range = 10;
+		else if(Rank == 0 || Rank == -1)
+			Range = 0;
+		else
+			Range = 1;
 	}
 	
 	public int Attack(Piece other)
@@ -84,5 +99,22 @@ public class Piece {
 			return -1;
 		else
 			return 0;
+	}
+	
+	@Override
+	public Piece clone()
+	{
+		String color = "R";
+		String rank = Rank + "";
+		if(Color == "Blue")
+			color = "B";
+		if(Rank == 10)
+			rank = "S";
+		if(Rank == 0)
+			rank = "B";
+		if(Rank == -1)
+			rank = "F";
+		//System.out.println(color+rank);
+		return new Piece(color+rank);
 	}
 }
