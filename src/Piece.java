@@ -160,7 +160,6 @@ public class Piece implements Cloneable, Serializable{
 			rank = "B";
 		if(Rank == -1)
 			rank = "F";
-		//System.out.println(color+rank);
 		return new Piece(color+rank);
 	}
 }

@@ -35,27 +35,30 @@ import java.awt.event.ActionListener;
 
 import java.lang.Math;
 
+/*This file is where the game takes place. Here we create the GUI, process user input,
+and maintain information regarding the game state.*/
+
 public class Board implements MouseListener, MouseMotionListener, Serializable{
-	public Piece[][] Squares = new Piece[10][10];
-	public String Turn;
-	public String Dialogue = "";
+	public Piece[][] Squares = new Piece[10][10];  //This is the main game board.
+	public String Turn;							   //A string identifying which player's turn it is currently.
+	public String Dialogue = "";					//The output string for printing to a JDialogueBox, used in ChangeTurns().
 	public int[] RedPieces;
 	public int[] BluePieces;
-	public int[] Pools = new int[22];
+	public int[] Pools = new int[22];				//Used to count number of pieces in Muster().
 	transient public JFrame Window;
 	transient public GamePanel Canvas;
-	public int X1 = -1;
+	public int X1 = -1;								//X1 and Y1 identify an initial click coordinate on Piece[][] Squares.
 	public int Y1 = -1;
-	public int X2 = -1;
+	public int X2 = -1;								//X2 and Y2 identify an secondary click coordinate on Piece[][] Squares.
 	public int Y2 = -1;
-	public int posx;
+	public int posx;								//posx and posy identify the current location of the cursor over Piece[][] Squares.
 	public int posy;
-	public String State;
-	transient public ArrayList<Piece> activePieces;
+	public String State;							//Identifies which stage the game is in. Red/Blue Placement, Red/Blue Turn, and Endgame.
+	transient public ArrayList<Piece> activePieces; //Used to place red pieces initially.
 	public int index = 0;
-	transient public ArrayList<Piece> secondaryPieces;
-	public Piece[] ActiveSave;
-	public Piece[] SecondarySave;
+	transient public ArrayList<Piece> secondaryPieces; //Used to place blue pieces initially.
+	public Piece[] ActiveSave;						//used to save data in activePieces when saving the game.
+	public Piece[] SecondarySave;					//used to save data in secondaryPieces when saving the game.
 
 	
 	public Board()
