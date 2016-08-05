@@ -147,7 +147,7 @@ public class Board implements MouseListener, MouseMotionListener, Serializable{
 		Canvas.repaint();  //Does the actual nitty gritty graphics drawing so we can update the board.
 	}
 	
-	public void NewMatch()
+	public void NewMatch() //Used to restart the game. Note this is almost entirely identical to Board().
 	{
 		//Window = new JFrame("Stratego");
 		Canvas.setVisible(false);
@@ -188,13 +188,15 @@ public class Board implements MouseListener, MouseMotionListener, Serializable{
 			}
 		}	
 		Flip();
-		SetupMatch();
+		SetupMatch();  //It also calls SetupMatch()!
 		Flip();
 	}
 	
-	public void ChangeTurns()
+	public void ChangeTurns() /*ChangeTurns() hides the current player's pieces, 
+		displays a dialogue which describes what happened the previous turn, and then shows the next
+		player's pieces, so they can take their turn. Pretty nifty! */
 	{
-		if(Dialogue.equals(""))
+		if(Dialogue.equals("")) //If no special events happened during the turn
 		{
 			Dialogue = "The current player has completed their turn. Next player, you're up!";
 		}
@@ -205,11 +207,13 @@ public class Board implements MouseListener, MouseMotionListener, Serializable{
 		JOptionPane.showMessageDialog(turnChange, Dialogue);
 		turnChange.getContentPane().add(hold);
 		Dialogue = "";
-		//turnChange.pack();
-		//turnChange.setVisible(true);
 	}
 	
-	public void CheckGameover()
+	public void CheckGameover() /* In Stratego, there are two special endgame conditions.
+								If the player has no moveable pieces left, (Perhaps they only 
+								have bombs and their flag left) they forfeit. Also, if they are
+								unable to move any of their pieces during a turn (They are all pinned in
+								by bombs or the flag) the player forfeits. This function checks for these conditons. */
 	{	
 		System.out.print("Check Gameover!");
 		//check if movable pieces
@@ -224,12 +228,12 @@ public class Board implements MouseListener, MouseMotionListener, Serializable{
 			{
 				if(Squares[i][j].Color.equals(Turn))
 				{
-					totalRange += Squares[i][j].Range;
+					totalRange += Squares[i][j].Range; //Finds the sum of ranges of remaining pieces of color Turn.
 				}
 			}
 		}
 		System.out.print("Total Range: " + totalRange);
-		if (totalRange == 0)
+		if (totalRange == 0) //If no moveable pieces, print the message and trigger endgame.
 		{
 			Dialogue = Turn + "player has no moveable pieces! Opponent is victorious!";
 			State = "Endgame";
@@ -240,7 +244,7 @@ public class Board implements MouseListener, MouseMotionListener, Serializable{
 		
 		
 		//check if pieces are stuck
-		int saveX1 = X1;
+		int saveX1 = X1;  //save previous mouse data, so nothing funky happens
 		int saveX2 = X2;
 		int saveY1 = Y1;
 		int saveY2 = Y2;
@@ -257,7 +261,9 @@ public class Board implements MouseListener, MouseMotionListener, Serializable{
 					Y2 = i;
 					if (X2 >= 0 && X2 <= 9) 
 						if (GetMove(true))
-						{
+						{ /*we pass our move function hypothetical moves and see if they are valid.
+							Note that we pass in 'true', which means move won't actually trigger combat or
+							otherwise move pieces.*/
 							System.out.print("break: " + X1 + " " + Y1 + " " + X2 + " " + Y2);
 							X1 = saveX1;
 							X2 = saveX2;
@@ -308,17 +314,18 @@ public class Board implements MouseListener, MouseMotionListener, Serializable{
 				}
 			}
 		}
-		if(!State.equals("Endgame"))
+		if(!State.equals("Endgame"))   //if the earlier check didn't trigger endgame, print a message
 		{
 			Dialogue = Turn + " player has trapped all of their pieces! Opponent is victorious!";
-			State = "Endgame";
+			State = "Endgame";  //and end the game.
 			Canvas.CursorPiece = new Piece("blank");
 			Turn = "reveal";
 			ChangeTurns();
 		}
 	}
 	
-	public boolean GetMove(boolean testRun)
+	public boolean GetMove(boolean testRun)  /*Getmove conducts a series of checks to determine if a move is legal,
+												if it is an attack move, and what the outcome of a legal move will be.*/
 	{
 		if(!Squares[Y1][X1].Color.equals(Turn)) //Only move own color
 			return false;
@@ -334,7 +341,7 @@ public class Board implements MouseListener, MouseMotionListener, Serializable{
 		if (Math.abs((X1 - X2) + (Y1 - Y2)) > 1) //if movement > 1
 		{
 			
-			if(X1 != X2) //If the movement is on X
+			if(X1 != X2) //If the movement is on X axis
 			{
 				int start=X1, stop=X2;
 				if (X1 > X2)
@@ -344,11 +351,12 @@ public class Board implements MouseListener, MouseMotionListener, Serializable{
 				}
 				for (int i=start+1; i<stop-1; i++) //Check intermediate spaces for obstacles 
 				{
-					if(!Squares[Y1][i].Color.equals(""))
+					if(!Squares[Y1][i].Color.equals("")) /*This is where lakes are important.
+															You can cross over open ground, but not lakes!*/
 						return false;
 				}
 			}
-			else //If the movement is on Y
+			else //If the movement is on Y axis
 			{
 				int start=Y1, stop=Y2;
 				if (Y1 > Y2)
@@ -363,7 +371,7 @@ public class Board implements MouseListener, MouseMotionListener, Serializable{
 				}		
 			}
 		}
-		if (testRun == true)
+		if (testRun == true) //If the move was hypothetical, we have determined it is a legal move. and will not continue processing the movement.
 			return true;
 		//move processing:
 		int result = -2;
