@@ -66,17 +66,17 @@ public class Board implements MouseListener, MouseMotionListener, Serializable{
 		Window = new JFrame("Stratego");
 		Canvas = new GamePanel();
 		Canvas.setVisible(true);
-		Canvas.Save.addActionListener(new ActionListener() {
+		Canvas.Save.addActionListener(new ActionListener() { //Create "Save Match" listener
 			public void actionPerformed(ActionEvent e) {
 				SaveMatch();
 			}
 		});
-		Canvas.Load.addActionListener(new ActionListener() {
+		Canvas.Load.addActionListener(new ActionListener() { //Create "Load Match" listener
 			public void actionPerformed(ActionEvent e) {
 				LoadMatch();
 			}
 		});
-		Canvas.New.addActionListener(new ActionListener() {
+		Canvas.New.addActionListener(new ActionListener() { //Create "New Match" listener
 			public void actionPerformed(ActionEvent e) {
 				NewMatch();
 			}
@@ -87,25 +87,25 @@ public class Board implements MouseListener, MouseMotionListener, Serializable{
 		Window.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 		Window.setVisible( true );	
 		Turn = "Red";
-		Canvas.playArea.addMouseListener(this);
+		Canvas.playArea.addMouseListener(this);			//Create mouse listeners
 		Canvas.playArea.addMouseMotionListener(this);
 		for(int i=0; i<10; i++)
 		{
 			for(int j=0; j<10; j++)
 			{
-				Squares[i][j] = new Piece("blank");
+				Squares[i][j] = new Piece("blank");  //initialize all pieces in Pieces[][] Squares to a blank Piece.
 				if((j == 2 && i == 4) || (j == 3 && i == 4) || (j == 2 && i == 5) || (j == 3 && i == 5) 
-						|| (j == 6 && i == 4) || (j == 7 && i == 4) || (j == 6 && i == 5) || (j == 7 && i == 5))
-					Squares[i][j] = new Piece("lake");
+						|| (j == 6 && i == 4) || (j == 7 && i == 4) || (j == 6 && i == 5) || (j == 7 && i == 5)) 
+					Squares[i][j] = new Piece("lake"); //except for these 8 Pieces, which represent lakes.
 					
 			}
 		}	
-		Flip();
+		Flip(); //Flip redraws the board. Very important!
 	}
 	
-	public void SetupMatch()
+	public void SetupMatch()  /*This is where we set up the game by letting the players place their Pieces on the board. */
 	{
-		String[] pieces = {
+		String[] pieces = {  //A list of all Pieces wich each player has.
 	            "B","B","B","B","B","B", /*Bombs*/
 	            "1","2","3","3",         /*Marshal, General, Colonels*/
 	            "4","4","4",             /*Majors*/
@@ -116,35 +116,35 @@ public class Board implements MouseListener, MouseMotionListener, Serializable{
 	            "9","9","9","9","9","9","9","9", /*Scouts*/
 	            "S", "F"};               /*Spy, Flag*/
 		
-		ArrayList<Piece> p1Pieces = new ArrayList<Piece>();
-		ArrayList<Piece> p2Pieces = new ArrayList<Piece>();
+		ArrayList<Piece> p1Pieces = new ArrayList<Piece>();  //To hold red pieces.
+		ArrayList<Piece> p2Pieces = new ArrayList<Piece>();	 //To hold blue pieces.
 		
-		for (int i=0; i<40; ++i)
-		{ //Populate lists of pieces
-		 	p1Pieces.add(new Piece("R" + pieces[i]));
-		 	p2Pieces.add(new Piece("B" + pieces[i]));
+		for (int i=0; i<40; ++i)  //for all 40 pieces that a player has,
+		{ 							//Populate lists of pieces
+		 	p1Pieces.add(new Piece("R" + pieces[i])); //create a red version of each
+		 	p2Pieces.add(new Piece("B" + pieces[i])); //and a blue version of each!
 		}
-		secondaryPieces = p2Pieces;
+		secondaryPieces = p2Pieces;  //Set these new lists to their counterparts with global scope.
 		activePieces = p1Pieces;
 		index = 0;
-		State = "Red Placement";
+		State = "Red Placement";  //Let's begin by placing the red player's pieces.
 		
 	} 
 	
-	public void Flip()
+	public void Flip()  //Flip redraws the board area for us. It also hides the pieces of the player whose turn it isn't!
 	{
 		boolean result;
 		for(int i=0; i<10; i++)
 		{
 			for(int j=0; j<10; j++)
 			{
-				result = (Squares[i][j].Color.equals(Turn));
-				if(Turn.equals("reveal"))
+				result = (Squares[i][j].Color.equals(Turn));  //show only Turn colored pieces.
+				if(Turn.equals("reveal"))  //If it is reveal turn (Used at Endgame), display all Pieces.
 					result = true;
 				Canvas.grid[i][j].NewPiece(Squares[i][j],result);
 			}
 		}
-		Canvas.repaint();
+		Canvas.repaint();  //Does the actual nitty gritty graphics drawing so we can update the board.
 	}
 	
 	public void NewMatch()
