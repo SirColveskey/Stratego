@@ -382,13 +382,13 @@ public class Board implements MouseListener, MouseMotionListener, Serializable{
 		}
 		else
 		{
-			result = Squares[Y1][X1].Attack(Squares[Y2][X2]);
+			result = Squares[Y1][X1].Attack(Squares[Y2][X2]); //find attack results
 		}
 		if(result == 1)
-		{
+		{ //Create a dialogue string to display at ChangeTurns()
 			String DefRank;
 			String AtkRank;
-			if(Squares[Y1][X1].Rank == 10)
+			if(Squares[Y1][X1].Rank == 10) 
 				AtkRank = "Spy";
 			else if(Squares[Y1][X1].Rank == 0)
 				AtkRank = "Bomb";
@@ -400,12 +400,12 @@ public class Board implements MouseListener, MouseMotionListener, Serializable{
 				DefRank = "Bomb";
 			else
 				DefRank = Squares[Y2][X2].Rank + "";
-			Dialogue = Squares[Y1][X1].Color + " Has defeated " + Squares[Y2][X2].Color + "'s piece: " + DefRank + " with a " + AtkRank;
+			Dialogue = Squares[Y1][X1].Color + " Has defeated " + Squares[Y2][X2].Color + "'s piece: " + DefRank + " with a " + AtkRank; //for ChangeTurns()
 			Squares[Y2][X2] = Squares[Y1][X1];
 			Squares[Y1][X1] = new Piece("blank");
 		}
 		if(result == -1)
-		{
+		{ //Create a dialogue string to display at ChangeTurns()
 			String DefRank;
 			String AtkRank;
 			if(Squares[Y1][X1].Rank == 10)
@@ -424,7 +424,7 @@ public class Board implements MouseListener, MouseMotionListener, Serializable{
 			Squares[Y1][X1] = new Piece("blank");
 		}
 		if(result == 0)
-		{
+		{ //Create a dialogue string to display at ChangeTurns()
 			String DefRank;
 			String AtkRank;
 			if(Squares[Y1][X1].Rank == 10)
@@ -444,14 +444,14 @@ public class Board implements MouseListener, MouseMotionListener, Serializable{
 			Squares[Y2][X2] = new Piece("blank");
 		}
 		if(result == 2)
-		{
+		{ //Create a dialogue string to display at ChangeTurns()
 			FlagCapture(Turn);
 			Muster();
 			Flip();
 			return true;
 		}
 		Turn = "";
-		Canvas.CursorPiece = new Piece("blank");
+		Canvas.CursorPiece = new Piece("blank"); //Grab a new piece for the mouse cursor.
 		Muster();
 		Flip();
 		ChangeTurns();
@@ -474,7 +474,7 @@ public class Board implements MouseListener, MouseMotionListener, Serializable{
 		return true;
 	}
 	
-	public void Muster()
+	public void Muster()  /*Muster() counts all of the pieces on the board, and lets us display the numbers for the players.*/
 	{
 		for(int i=0; i<22; i++)
 		{
@@ -504,7 +504,7 @@ public class Board implements MouseListener, MouseMotionListener, Serializable{
 	}
 	
 	public void FlagCapture(String Color)
-	{
+	{//Create a dialogue string to display at ChangeTurns()
 		Dialogue = Color + " has captured their opponent's flag and is victorious! Contratulations!";
 		Turn = "reveal";
 		State = "Endgame";
@@ -515,13 +515,13 @@ public class Board implements MouseListener, MouseMotionListener, Serializable{
 		ChangeTurns();
 	}
 	
-	public void LoadMatch()
+	public void LoadMatch() //Loads the serialized data from the save file.
 	{	
 		try
 	      {
 	         FileInputStream fileIn = new FileInputStream("StrategoSave.data");
 	         ObjectInputStream in = new ObjectInputStream(fileIn);
-	         Squares = new Piece[10][10];
+	         Squares = new Piece[10][10]; //Read these things back from the file.
 	         Squares = (Piece[][]) in.readObject();
 	         Turn = (String) in.readObject();
 	         ActiveSave = (Piece[]) in.readObject();
@@ -534,18 +534,18 @@ public class Board implements MouseListener, MouseMotionListener, Serializable{
 	         secondaryPieces = new ArrayList<Piece>(Arrays.asList(SecondarySave));
 	         for(int i=0; i<10; i++){
 	        	 for(int j=0; j<10; j++){
-	        		 Squares[i][j].Reimage();
+	        		 Squares[i][j].Reimage(); //Lots of reimaging
 	        	 }
 	         }
 	         for(int i=0; i<activePieces.size(); i++){
-	        	 activePieces.get(i).Reimage();
+	        	 activePieces.get(i).Reimage(); //Lots
 	         }
 	         for(int i=0; i<secondaryPieces.size(); i++){
-	        	 secondaryPieces.get(i).Reimage();
+	        	 secondaryPieces.get(i).Reimage(); //This was a problem
 	        	 System.out.println(secondaryPieces.get(i).Color);
 	         }
 	          
-	      }catch(IOException i)
+	      }catch(IOException i) //Watch for exceptions!!
 	      {
 	    	 System.out.print("IOException");
 	         i.printStackTrace();
@@ -556,46 +556,46 @@ public class Board implements MouseListener, MouseMotionListener, Serializable{
 	         c.printStackTrace();
 	         return;
 	      }
-		Muster();
+		Muster(); //Update muster and flip!
 		Flip();
 		
 		
 	}
 	
-	public void SaveMatch()
+	public void SaveMatch() //Save the current game to a file using serialization!
 	{
 		ActiveSave = new Piece[activePieces.size()];
 		SecondarySave = new Piece[secondaryPieces.size()];
 		ActiveSave = activePieces.toArray(ActiveSave);
 		SecondarySave = secondaryPieces.toArray(SecondarySave);
 		try {
-			FileOutputStream fileOut = new FileOutputStream("StrategoSave.data");
+			FileOutputStream fileOut = new FileOutputStream("StrategoSave.data"); //save here!
 			ObjectOutputStream out = new ObjectOutputStream(fileOut);
-			out.writeObject(Squares);
+			out.writeObject(Squares); //Write these things to the file
 			out.writeObject(Turn);
 			out.writeObject(ActiveSave);
 			out.writeObject(SecondarySave);
 			out.writeObject(State);
 			out.close();
 			fileOut.close();
-			} catch(IOException i)
+			} catch(IOException i) //exceptions to watch
 		{
 		 System.out.print("IOException");
 		}
 	}
 	
-	public void Blank()
+	public void Blank() //Unused, see ChangeTurns()
 	{
 		//Show blank screen with text "Hit Space to Continue" or something of the like
 		//For turn swaps
 	}
 	
-	public void drawPiece(Graphics g){
+	public void drawPiece(Graphics g){ //used to draw each Piece with it's sprites.
 		g.drawImage(activePieces.get(0).insignia,posx,posy,null);
 		Flip();
 	}
 	
-	public void PlacePiece()
+	public void PlacePiece() //used to initialize the board.
 	{
 		if (State.equals("Red Placement"))
 		{
@@ -645,7 +645,7 @@ public class Board implements MouseListener, MouseMotionListener, Serializable{
 	}
 	
 	
-	public void mousePressed(MouseEvent e){
+	public void mousePressed(MouseEvent e){ //Mouse action listener. Collects X1, Y1, X2, Y2.
 		X1 = e.getX()/75;
 		Y1 = e.getY()/75;
 		System.out.print(activePieces.size());
@@ -676,7 +676,7 @@ public class Board implements MouseListener, MouseMotionListener, Serializable{
 		
 		//System.out.println("The mouse was clicked down at "+X+" "+Y);
 	}
-	public void mouseReleased(MouseEvent e){
+	public void mouseReleased(MouseEvent e){ //Mouse action listener.
 		X2 = e.getX()/75;
 		Y2 = e.getY()/75;
 		
@@ -697,7 +697,7 @@ public class Board implements MouseListener, MouseMotionListener, Serializable{
 		
 		//System.out.println("The mouse was clicked up");	
 	}
-	public void mouseEntered(MouseEvent e){
+	public void mouseEntered(MouseEvent e){ //Mouse action listener.
 		if(State == null)
 			return;
 		if (State.equals("Red Placement") || State.equals("Blue Placement"))
@@ -705,23 +705,23 @@ public class Board implements MouseListener, MouseMotionListener, Serializable{
 		Flip();
 		//System.out.println("The mouse has entered the building");		
 	}
-	public void mouseExited(MouseEvent e){
+	public void mouseExited(MouseEvent e){ //Mouse action listener.
 		X1 = Y1 = X2 = Y2 = -1;
 		Canvas.CursorPiece = new Piece("blank");
 		Flip();
 		//System.out.println("The mouse has left the building");
 	}
-	public void mouseClicked(MouseEvent e){
+	public void mouseClicked(MouseEvent e){ //Mouse action listener.
 		//Doesn't Matter
 	}
-	public void mouseDragged(MouseEvent e){
+	public void mouseDragged(MouseEvent e){ //Mouse action listener.
 		Canvas.X = e.getX();
 		Canvas.Y = e.getY();
 		if (State.equals("Red Placement") || State.equals("Blue Placement"))
 			Canvas.CursorPiece = activePieces.get(0);
 		Flip();
 	}
-	public void mouseMoved(MouseEvent e){
+	public void mouseMoved(MouseEvent e){ //Mouse action listener.
 		Canvas.X = e.getX();
 		Canvas.Y = e.getY();
 		if(State == null)
@@ -733,7 +733,7 @@ public class Board implements MouseListener, MouseMotionListener, Serializable{
 	
 }
 
-class GamePanel extends JPanel {
+class GamePanel extends JPanel { //Draw the game window and stuff!
 	public int[] Selection1 = {-1,-1};
 	public int[] Selection2 = {-1,-1};
 	public Piece BLANK_PIECE;
@@ -744,19 +744,19 @@ class GamePanel extends JPanel {
 	public Box playArea;
 	public Piece CursorPiece;
 	public int X,Y;
-	public JButton Save;
+	public JButton Save; //Buttons!
 	public JButton Load;
 	public JButton New;
 	public GamePanel(){
 		BLANK_PIECE = new Piece("blank");
-		Box[] Base = new Box[3];
+		Box[] Base = new Box[3]; //Boxes!
 		Box[] Center = new Box[3];
 		Box[] Collumn = new Box[11];
-		int[] CollumnHs = {215,37,65,37,37,145,37,65,37,37,25};
+		int[] CollumnHs = {215,37,65,37,37,145,37,65,37,37,25}; //Formatting for Muster panel
 		int[] CollumnWs = {400,30,400,30,170,400,30,400,30,170,400};
 		Box[] Logs = new Box[10];
 		try {
-			bgImage = ImageIO.read(Board.class.getResourceAsStream("/resources/Board.png"));
+			bgImage = ImageIO.read(Board.class.getResourceAsStream("/resources/Board.png")); //Graphics!
 		} catch (IOException ex) {
 			System.out.println("Error with file loading.");
 		}
@@ -860,7 +860,7 @@ class GamePanel extends JPanel {
 		}
 	}
 	
-	public void UpdatePools(int[] Pools)
+	public void UpdatePools(int[] Pools) 
 	{
 		for(int i=0; i<22; i++)
 		{
@@ -868,7 +868,7 @@ class GamePanel extends JPanel {
 		}
 	}
 	
-	public void paintComponent(Graphics g)
+	public void paintComponent(Graphics g) //Graphics stuff
 	{
 		super.paintComponent(g);
 		g.drawImage(bgImage, 0, 0, null);
@@ -878,44 +878,13 @@ class GamePanel extends JPanel {
 			}}
 	}
 	
-	public Dimension getPreferredSize()
+	public Dimension getPreferredSize() //for window
 	{
 		return new Dimension(1200,900);
 	}
 }
-/*
-class MousePanel extends JPanel{
-	public BufferedImage Castle;
-	public BufferedImage Rank;
-	public int X;
-	public int Y;
-	public MousePanel(Piece piece, int x, int y){
-		X = x;
-		Y = y;
-		Castle = piece.piece;
-		Rank = piece.insignia;
-		setOpaque(false);
-	}
-	public void UpdatePosition(int x, int y){
-		X = x;
-		Y = y;
-	}
-	public void NewPiece(Piece piece){
-		Castle = piece.piece;
-		Rank = piece.insignia;
-	}
-	public void paintComponent(Graphics g)
-	{
-		super.paintComponent(g);
-		g.drawImage(Castle, X, Y, null);
-		g.drawImage(Rank, X, Y, null);
-	}
-	public Dimension getPreferredSize()
-	{
-		return new Dimension(75,75);
-	}
-}*/
-class PiecePanel extends JPanel{
+
+class PiecePanel extends JPanel{ //Used to contain the bits for a Piece and its images
 	public BufferedImage Castle;
 	public BufferedImage Rank;
 	public boolean YourTurn;
@@ -927,14 +896,14 @@ class PiecePanel extends JPanel{
 		setOpaque(false);
 	}
 	
-	public void NewPiece(Piece piece, boolean Turn)
+	public void NewPiece(Piece piece, boolean Turn)  //Lets us grab a new piece with image info
 	{
 		YourTurn = Turn;
 		Castle = piece.piece;
 		Rank = piece.insignia;
 	}
 	
-	public void paintComponent(Graphics g)
+	public void paintComponent(Graphics g)  //You know, for painting and stuff.
 	{
 		super.paintComponent(g);
 		if(Castle != null)
@@ -946,7 +915,7 @@ class PiecePanel extends JPanel{
 		}
 	}
 	
-	public Dimension getPreferredSize()
+	public Dimension getPreferredSize() 
 	{
 		return new Dimension(75,75);
 	}
