@@ -5,15 +5,17 @@ import java.io.Serializable;
 
 import javax.imageio.ImageIO;
 
+/*This file creates a class of Pieces which we use to populate the game board.*/
+
 public class Piece implements Cloneable, Serializable{
-	public String Color;
-	public int Rank;
-	public int Range;
-	transient public BufferedImage piece;
+	public String Color; //Denotes which player controls the piece.
+	public int Rank; //Denotes the level of the piece.
+	public int Range; //Some pieces can move across the board, others are unable to move.
+	transient public BufferedImage piece; 
 	transient public BufferedImage insignia;
 	public Piece(String ID)
 	{
-		if(ID == "blank")
+		if(ID == "blank") //blank pieces occupy the empty areas of the board.
 		{
 			piece = null;
 			insignia = null;
@@ -22,7 +24,7 @@ public class Piece implements Cloneable, Serializable{
 			Color = "";
 			return;
 		}
-		if(ID == "lake")
+		if(ID == "lake") //lake pieces are identical to blank pieces, except they cannot be moved through.
 		{
 			piece = null;
 			insignia = null;
@@ -37,7 +39,7 @@ public class Piece implements Cloneable, Serializable{
 		//System.out.println(lastChar);
 		if(firstChar.equals("R"))
 		{
-			Color = "Red";
+			Color = "Red"; //Here we load the castle images for each red piece.
 			try {
 				piece = ImageIO.read(Piece.class.getResourceAsStream("/resources/RED.png"));
 			} catch (IOException ex) {
@@ -46,21 +48,21 @@ public class Piece implements Cloneable, Serializable{
 		}
 		else if(firstChar.equals("B"))
 		{
-			Color = "Blue";
+			Color = "Blue"; //Here we load the castle images for each blue piece.
 			try {
 				piece = ImageIO.read(Piece.class.getResourceAsStream("/resources/BLUE.png"));
 			} catch (IOException ex) {
 				System.out.println("Error with file loading.");}
 		}
-		if(lastChar.equals("S"))
+		if(lastChar.equals("S")) //the Spy is identified by a rank of 10 behind the scenes. 
 		{
 			Rank = 10;
 		}
-		else if(lastChar.equals("B"))
+		else if(lastChar.equals("B")) //Bombs are identified by a rank of 0 behind the scenes. 
 		{
 			Rank = 0;
 		}
-		else if(lastChar.equals("F"))
+		else if(lastChar.equals("F")) //the Flag is identified by a rank of -1 behind the scenes. 
 		{
 			Rank = -1;
 		}
@@ -68,7 +70,7 @@ public class Piece implements Cloneable, Serializable{
 		{
 			Rank = Integer.parseInt(lastChar);
 		}
-		try {
+		try {			//Here we load the specific images for each piece, showing color and rank.
 			insignia = ImageIO.read(Piece.class.getResourceAsStream("/resources/"+Color+lastChar+".png"));
 		} catch (IOException ex) {
 			System.out.println("Error with file loading.");
@@ -81,7 +83,7 @@ public class Piece implements Cloneable, Serializable{
 			Range = 1;
 	}
 	
-	public void Reimage()
+	public void Reimage() /*This function reloads the images for the game. This is important when loading a saved game. */
 	{
 		String lastChar;
 		if(Color.equals("Red")){
@@ -124,18 +126,18 @@ public class Piece implements Cloneable, Serializable{
 		
 		}
 	
-	public int Attack(Piece other)
+	public int Attack(Piece other) //This short function handles all of the combat computations.
 	{
-		if(other.Rank == -1)
+		if(other.Rank == -1) //if flag attacked
 			return 2;
-		else if(other.Rank == 0)
+		else if(other.Rank == 0) //if bomb attacked
 		{
-			if(Rank != 8)
+			if(Rank != 8) //if not a miner (8)
 				return -1;
 			else
 				return 1;
 		}
-		else if(Rank == 10 && other.Rank == 1)
+		else if(Rank == 10 && other.Rank == 1) //all other combat is a simple comparison
 			return 1;
 		else if(Rank < other.Rank)
 			return 1;
@@ -146,7 +148,7 @@ public class Piece implements Cloneable, Serializable{
 	}
 	
 	@Override
-	public Piece clone()
+	public Piece clone()  //a clone function for loading and moving pieces.
 	{
 		String color = "R";
 		String rank = Rank + "";
